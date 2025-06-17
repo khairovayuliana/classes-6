@@ -61,23 +61,19 @@
 
 Активация способностей:
 
-- `Hybrid& activateVampirePower()` - активирует силу вампира. Выводит: `[name] активировал силу вампира!`
+- `Hybrid& activateVampirePower()` - активирует силу вампира. Выводит: `[name] активировал силу вампира!` Возвращает `*this`
 
-- `Hybrid& activateWerewolfPower()` - активирует силу оборотня. Выводит: `[name] активировал силу оборотня!\n`
+- `Hybrid& activateWerewolfPower()` - активирует силу оборотня. Выводит: `[name] активировал силу оборотня!\n` Возвращает `*this`
 
 Управление яростью:
 
-- `Hybrid& increaseRage()` - увеличивает `rage_level` на 10 (максимум 100). Возвращает *this
+- `Hybrid& increaseRage()` - увеличивает `rage_level` на 10 (максимум 100). Возвращает `*this`
 
 - `void checkRage()` - если `rage_level` >= 70, выводит: `[name] впадает в ярость! Уровень: [rage_level]`
-
-Переопределение метода:
-
-- `void becomeSupernatural()` - выводит: `[name] уже гибрид и не может стать кем-то еще!`
 
 Геттеры для новых полей:
 
 - `bool hasVampirePower() const`
 - `bool hasWerewolfPower() const`
 - `int getRageLevel() const`
-При возникновении вопросов обращайтесь к тестам, которые находятся в файле `tests/test.cpp`.
+При возникновении вопросов обращайтесь к тестам, которые находятся в файле `tests/test.cpp`. Обрати внимание, что в данной задаче тебе понадобится изменить **три** файла: `src/human.cpp`, `src/hybrid.cpp`, `include/hybrid.h`. 

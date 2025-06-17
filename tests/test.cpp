@@ -1,62 +1,112 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 #include <sstream>
-#include <iomanip>
-#include <cmath>
+#include "hybrid.h"
 
-#include "point.h"
+TEST_CASE("Human class functionality", "[Human]") {
+    SECTION("Default constructor") {
+        Human h;
+        REQUIRE(h.getName() == "Unknown");
+        REQUIRE(h.getAge() == 0);
+        REQUIRE(h.isAlive() == true);
+    }
 
-TEST_CASE("Point: Structure definition and initialization") {
-    Point p;
-    REQUIRE(sizeof(p.x) == sizeof(double));
-    REQUIRE(sizeof(p.y) == sizeof(double));
+    SECTION("Parameterized constructor") {
+        Human h("Elena", 17);
+        REQUIRE(h.getName() == "Elena");
+        REQUIRE(h.getAge() == 17);
+        REQUIRE(h.isAlive() == true);
+    }
+
+    SECTION("die() method") {
+        Human h("Kai", 22);
+        h.die();
+        REQUIRE(h.isAlive() == false);
+    }
+
+    SECTION("becomeSupernatural() output") {
+        Human h("Enzo", 27);
+        std::ostringstream oss;
+        std::streambuf* oldCout = std::cout.rdbuf(oss.rdbuf());
+
+        h.becomeSupernatural();
+        std::cout.rdbuf(oldCout);
+
+        REQUIRE(oss.str() == "Enzo превращается в сверхъестественное существо!\n");
+    }
 }
 
-TEST_CASE("Point: Initialization with zeros by default") {
-    Point p;
-    REQUIRE(std::abs(p.x) < 1e-9);  // Check if x is initialized to 0
-    REQUIRE(std::abs(p.y) < 1e-9);  // Check if y is initialized to 0
-}
+TEST_CASE("Hybrid class functionality", "[Hybrid]") {
+    SECTION("Inheritance from Human") {
+        Hybrid h("Klaus", 1000);
+        REQUIRE(h.getName() == "Klaus");
+        REQUIRE(h.getAge() == 1000);
+        REQUIRE(h.isAlive() == true);
+    }
 
-TEST_CASE("Square area of rectangle defined by two points") {
-    Point a{1.0, 2.0};
-    Point b{4.0, 6.0};
+    SECTION("Default power states") {
+        Hybrid h;
+        REQUIRE(h.hasVampirePower() == false);
+        REQUIRE(h.hasWerewolfPower() == false);
+        REQUIRE(h.getRageLevel() == 0);
+    }
 
-    double area = rectangleSquare(a, b);
-    REQUIRE(area == Approx(12.0).epsilon(1e-9));
-}
+    SECTION("activateVampirePower() output") {
+        Hybrid h("Elijah", 900);
+        std::ostringstream oss;
+        std::streambuf* oldCout = std::cout.rdbuf(oss.rdbuf());
 
-TEST_CASE("Rectangle area: zero area when points are the same") {
-    Point a{2.5, 3.5};
-    Point b{2.5, 3.5};
-    double area = rectangleSquare(a, b);
-    REQUIRE(area == Approx(0.0).epsilon(1e-9));
-}
+        h.activateVampirePower();
+        std::cout.rdbuf(oldCout);
 
-TEST_CASE("Rectangle area: negative coordinates") {
-    Point a{-2.0, -3.0};
-    Point b{-5.0, -7.0};
-    double area = rectangleSquare(a, b);
-    REQUIRE(area == Approx(12.0).epsilon(1e-9));
-}
+        REQUIRE(oss.str() == "Elijah активировал силу вампира!\n");
+        REQUIRE(h.hasVampirePower() == true);
+    }
 
-TEST_CASE("Rectangle area: mixed positive and negative coordinates") {
-    Point a{-1.0, 2.0};
-    Point b{3.0, -2.0};
-    double area = rectangleSquare(a, b);
-    REQUIRE(area == Approx(16.0).epsilon(1e-9));
-}
+    SECTION("activateWerewolfPower() output") {
+        Hybrid h("Hayley", 200);
+        std::ostringstream oss;
+        std::streambuf* oldCout = std::cout.rdbuf(oss.rdbuf());
 
-TEST_CASE("Rectangle area: one axis same") {
-    Point a{0.0, 5.0};
-    Point b{10.0, 5.0};
-    double area = rectangleSquare(a, b);
-    REQUIRE(area == Approx(0.0).epsilon(1e-9));
-}
+        h.activateWerewolfPower();
+        std::cout.rdbuf(oldCout);
 
-TEST_CASE("Rectangle area: large values") {
-    Point a{1e6, 2e6};
-    Point b{2e6, 4e6};
-    double area = rectangleSquare(a, b);
-    REQUIRE(area == Approx(2e12).epsilon(1e-3));
+        REQUIRE(oss.str() == "Hayley активировал силу оборотня!\n");
+        REQUIRE(h.hasWerewolfPower() == true);
+    }
+
+    SECTION("Rage level management") {
+        Hybrid h("Tyler", 150);
+
+        for (int i = 0; i < 5; ++i) {
+            h.increaseRage();
+        }
+        REQUIRE(h.getRageLevel() == 50);
+
+        std::ostringstream oss;
+        std::streambuf* oldCout = std::cout.rdbuf(oss.rdbuf());
+        h.checkRage();
+        std::cout.rdbuf(oldCout);
+        REQUIRE(oss.str().empty());
+
+        for (int i = 0; i < 2; ++i) {
+            h.increaseRage();
+        }
+        REQUIRE(h.getRageLevel() == 70);
+
+        oss.str("");
+        oldCout = std::cout.rdbuf(oss.rdbuf());
+        h.checkRage();
+        std::cout.rdbuf(oldCout);
+        REQUIRE(oss.str() == "Tyler впадает в ярость! Уровень: 70\n");
+    }
+
+    SECTION("Method chaining") {
+        Hybrid h("Rebekah", 800);
+        h.activateVampirePower().activateWerewolfPower().increaseRage().increaseRage();
+
+        REQUIRE(h.hasVampirePower() == true);
+        REQUIRE(h.hasWerewolfPower() == true);
+        REQUIRE(h.getRageLevel() == 20);
+    }
 }

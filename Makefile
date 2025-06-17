@@ -1,5 +1,5 @@
 CXX_FLAGS = -std=c++20 -O3 -g -fsanitize=address -Iinclude
-SOURCES = src/hybrid.cpp
+SOURCES = src/human.cpp src/hybrid.cpp
 
 .PHONY: all
 all:
